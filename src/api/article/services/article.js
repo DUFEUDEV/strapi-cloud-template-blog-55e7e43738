@@ -11,13 +11,23 @@ module.exports = createCoreService('api::article.article');
 module.exports = {
     async afterCreate(article) {
       const { result } = article;
-  
-      strapi.services.notification.sendToTopic({
+      const message = {
+        notification: {
+          title: article.title,
+          body: article.title,
+        },
         topic: 'nouvelles',
-        title: 'Nouvel Article Publié',
-        body: result.title,
         data: { articleId: result.id },
+      };
+  
+      strapi.plugins['FCM'].services.fcm.send(message)
+      .then(response => {
+        console.log('Successfully sent message:', response);
+      })
+      .catch(error => {
+        console.error('Failed to send message:', error);
       });
+      strapi.services.notification
     }
   };
   

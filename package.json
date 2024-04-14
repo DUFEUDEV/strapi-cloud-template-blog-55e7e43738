@@ -12,6 +12,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "5.3.4",
+    "sharp": "^0.33.3",
     "strapi-plugin-fcm": "^1.0.9",
     "styled-components": "5.3.3"
   },
