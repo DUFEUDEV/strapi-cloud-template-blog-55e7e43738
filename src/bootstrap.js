@@ -6,7 +6,7 @@ const mime = require("mime-types");
 const set = require("lodash.set");
 
 const admin = require('firebase-admin');
-const serviceAccount = strapi.config.environment.SERVICE_ACCOUNT;
+const { env } = require("node:process");
 
 async function isFirstRun() {
   const pluginStore = strapi.store({
@@ -156,6 +156,7 @@ async function updateBlocks(blocks) {
 
 module.exports = async () => {
   const shouldImportSeedData = await isFirstRun();
+  const serviceAccount = JSON.parse(env.SERVICE_ACCOUNT);
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
