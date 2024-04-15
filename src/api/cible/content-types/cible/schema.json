@@ -1,0 +1,22 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cibles",
+  "info": {
+    "singularName": "cible",
+    "pluralName": "cibles",
+    "displayName": "Cible",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Nom": {
+      "type": "string"
+    },
+    "Valeur": {
+      "type": "string"
+    }
+  }
+}

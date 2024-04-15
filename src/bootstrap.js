@@ -4,13 +4,9 @@ const fs = require("fs-extra");
 const path = require("path");
 const mime = require("mime-types");
 const set = require("lodash.set");
-const {
-  categories,
-  authors,
-  articles,
-  global,
-  about,
-} = require("../data/data.json");
+
+const admin = require('firebase-admin');
+const serviceAccount = strapi.config.environment.SERVICE_ACCOUNT;
 
 async function isFirstRun() {
   const pluginStore = strapi.store({
@@ -158,105 +154,11 @@ async function updateBlocks(blocks) {
   return updatedBlocks;
 }
 
-async function importArticles() {
-  for (const article of articles) {
-    const cover = await checkFileExistsBeforeUpload([`${article.slug}.jpg`]);
-    const updatedBlocks = await updateBlocks(article.blocks);
-
-    await createEntry({
-      model: "article",
-      entry: {
-        ...article,
-        cover,
-        blocks: updatedBlocks,
-        // Make sure it's not a draft
-        publishedAt: Date.now(),
-      },
-    });
-  }
-}
-
-async function importGlobal() {
-  const favicon = await checkFileExistsBeforeUpload(["favicon.png"]);
-  const shareImage = await checkFileExistsBeforeUpload(["default-image.png"])
-  return createEntry({
-    model: "global",
-    entry: {
-      ...global,
-      favicon,
-      // Make sure it's not a draft
-      publishedAt: Date.now(),
-      defaultSeo: {
-        ...global.defaultSeo,
-        shareImage
-      }
-    },
-  });
-}
-
-async function importAbout() {
-  const updatedBlocks = await updateBlocks(about.blocks);
-
-  await createEntry({
-    model: "about",
-    entry: {
-      ...about,
-      blocks: updatedBlocks,
-      // Make sure it's not a draft
-      publishedAt: Date.now(),
-    },
-  });
-}
-
-async function importCategories() {
-  for (const category of categories) {
-    await createEntry({ model: "category", entry: category });
-  }
-}
-
-async function importAuthors() {
-  for (const author of authors) {
-    const avatar = await checkFileExistsBeforeUpload([author.avatar]);
-
-    await createEntry({
-      model: "author",
-      entry: {
-        ...author,
-        avatar,
-      },
-    });
-  }
-}
-
-async function importSeedData() {
-  // Allow read of application content types
-  await setPublicPermissions({
-    article: ["find", "findOne"],
-    category: ["find", "findOne"],
-    author: ["find", "findOne"],
-    global: ["find", "findOne"],
-    about: ["find", "findOne"],
-  });
-
-  // Create all entries
-  await importCategories();
-  await importAuthors();
-  await importArticles();
-  await importGlobal();
-  await importAbout();
-}
-
 module.exports = async () => {
   const shouldImportSeedData = await isFirstRun();
 
-  if (shouldImportSeedData) {
-    try {
-      console.log("Setting up the template...");
-      await importSeedData();
-      console.log("Ready to go");
-    } catch (error) {
-      console.log("Could not import seed data");
-      console.error(error);
-    }
-  }
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+
 };

@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "offres_promotionnelles",
+  "info": {
+    "singularName": "offre-promotionnelle",
+    "pluralName": "offres-promotionnelles",
+    "displayName": "Offre Promotionnelle",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Titre": {
+      "type": "string",
+      "required": true
+    },
+    "Image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "Description": {
+      "type": "richtext",
+      "required": false
+    },
+    "cible": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::cible.cible"
+    },
+    "Notification": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
